@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.5.0-local+sha.4fc7346
+ * @license AngularJS v1.5.0-local+sha.00378ca
  * (c) 2010-2015 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -57,7 +57,7 @@ function minErr(module, ErrorConstructor) {
       return match;
     });
 
-    message += '\nhttp://errors.angularjs.org/1.5.0-local+sha.4fc7346/' +
+    message += '\nhttp://errors.angularjs.org/1.5.0-local+sha.00378ca/' +
       (module ? module + '/' : '') + code;
 
     for (i = SKIP_INDEXES, paramPrefix = '?'; i < templateArgs.length; i++, paramPrefix = '&') {
@@ -2395,7 +2395,7 @@ function toDebugString(obj) {
  * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
  */
 var version = {
-  full: '1.5.0-local+sha.4fc7346',    // all of these placeholder strings will be replaced by grunt's
+  full: '1.5.0-local+sha.00378ca',    // all of these placeholder strings will be replaced by grunt's
   major: 1,    // package task
   minor: 5,
   dot: 0,
@@ -3081,7 +3081,7 @@ var JQLitePrototype = JQLite.prototype = {
 // value on get.
 //////////////////////////////////////////
 var BOOLEAN_ATTR = {};
-forEach('multiple,selected,checked,disabled,readOnly,required,open'.split(','), function(value) {
+forEach('multiple,selected,checked,disabled,readOnly,required,open,indeterminate'.split(','), function(value) {
   BOOLEAN_ATTR[lowercase(value)] = value;
 });
 var BOOLEAN_ELEMENTS = {};
@@ -22214,7 +22214,6 @@ function parseConstantExpr($parse, context, name, expression, fallback) {
 function checkboxInputType(scope, element, attr, ctrl, $sniffer, $browser, $filter, $parse) {
   var trueValue = parseConstantExpr($parse, scope, 'ngTrueValue', attr.ngTrueValue, true);
   var falseValue = parseConstantExpr($parse, scope, 'ngFalseValue', attr.ngFalseValue, false);
-  var indeterminateValue = parseConstantExpr($parse, scope, 'ngIndeterminateValue', attr.ngIndeterminateValue, null);
 
   var listener = function(ev) {
     ctrl.$setViewValue(element[0].checked, ev && ev.type);
@@ -22238,21 +22237,8 @@ function checkboxInputType(scope, element, attr, ctrl, $sniffer, $browser, $filt
   });
 
   ctrl.$parsers.push(function(value) {
-    if(element[0].indeterminate)
-      return indeterminateValue;
-
     return value ? trueValue : falseValue;
   });
-
-  scope.$watch(function() {
-    return element[0].indeterminate;
-  }, function(ev) {
-    if(element[0].indeterminate)
-        ctrl.$setViewValue(indeterminateValue);
-      else
-        ctrl.$setViewValue(element[0].checked, ev && ev.type);
-  });
-
 }
 
 
@@ -22429,8 +22415,8 @@ function checkboxInputType(scope, element, attr, ctrl, $sniffer, $browser, $filt
       </file>
     </example>
  */
-var inputDirective = ['$browser', '$sniffer', '$filter', '$parse', '$timeout',
-    function($browser, $sniffer, $filter, $parse, $timeout) {
+var inputDirective = ['$browser', '$sniffer', '$filter', '$parse',
+    function($browser, $sniffer, $filter, $parse) {
   return {
     restrict: 'E',
     require: ['?ngModel'],
@@ -22438,7 +22424,7 @@ var inputDirective = ['$browser', '$sniffer', '$filter', '$parse', '$timeout',
       pre: function(scope, element, attr, ctrls) {
         if (ctrls[0]) {
           (inputType[lowercase(attr.type)] || inputType.text)(scope, element, attr, ctrls[0], $sniffer,
-                                                              $browser, $filter, $parse, $timeout);
+                                                              $browser, $filter, $parse);
         }
       }
     }
